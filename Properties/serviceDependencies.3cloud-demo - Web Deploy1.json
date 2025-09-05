@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "connectionInfo": "App registration: Woodgrove_Demo, Tenant: Alterica Healthcare (altericahealth.com - Microsoft Entra ID)",
+      "type": "identityapp.default",
+      "connectionId": "AzureAD:ClientSecret"
+    },
+    "appInsights1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/microsoft.insights/components/3Cloud-appinsights-demo",
+      "type": "appInsights.azure",
+      "connectionId": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+      "dynamicId": null
+    },
+    "storage1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('serviceConnectorResourceGroupName')]/providers/Microsoft.Web/sites/3cloud-demo/providers/Microsoft.ServiceLinker/linkers/Program_CS_ValuesstorageConnectionString_8861C989C9, /subscriptions/fa552893-9da8-4f62-ab93-4f8d5e34f0a3/resourceGroups/3Cloud-Dev-Demo/providers/Microsoft.Web/sites/3cloud-demo/providers/Microsoft.ServiceLinker/linkers/Program_CS_ValuesstorageConnectionString_F7A83F7A20",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/demostoragegjvl4j",
+      "type": "storage.azure",
+      "connectionId": "Program_CS_Values:storageConnectionString1",
+      "dynamicId": null
+    }
+  }
+}

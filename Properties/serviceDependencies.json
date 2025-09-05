@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "type": "identityapp",
+      "connectionId": "AzureAD:ClientSecret"
+    },
+    "appInsights1": {
+      "type": "appInsights",
+      "connectionId": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+      "dynamicId": null
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "Program_CS_Values:storageConnectionString1",
+      "dynamicId": null
+    }
+  }
+}

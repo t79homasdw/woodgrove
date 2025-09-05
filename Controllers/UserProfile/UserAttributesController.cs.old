@@ -1,0 +1,142 @@
+﻿using Microsoft.Identity.Web;
+using System.Dynamic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.Json;
+using Azure.Identity;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Graph;
+using Microsoft.Graph.Models;
+using Microsoft.Graph.Models.ODataErrors;
+using Microsoft.Identity.Abstractions;
+using woodgrovedemo.Helpers;
+using woodgrovedemo.Models;
+
+namespace woodgrovedemo.Controllers;
+
+[Authorize]
+[ApiController]
+[Route("api/[controller]")]
+public class UserAttributesController : ControllerBase
+{
+
+    // Dependency injection
+    private readonly IConfiguration _configuration;
+    private TelemetryClient _telemetry;
+    private readonly GraphServiceClient _graphServiceClient;
+    readonly IAuthorizationHeaderProvider _authorizationHeaderProvider;
+    private readonly IDownstreamApiFactory _downstreamApiFactory;
+
+    private string ExtensionAttributes { get; set; } = "";
+
+    public UserAttributesController(IConfiguration configuration, TelemetryClient telemetry, GraphServiceClient graphServiceClient, IDownstreamApiFactory downstreamApiFactory)
+    {
+        _configuration = configuration;
+        _telemetry = telemetry;
+
+        // Get the app settings
+        ExtensionAttributes = _configuration.GetSection("MicrosoftGraph:ExtensionAttributes").Value ?? string.Empty;
+        _graphServiceClient = graphServiceClient;
+        _downstreamApiFactory = downstreamApiFactory;
+    }
+
+    [HttpGet]
+public async Task<IActionResult> GetAsync()
+{
+    UserAttributes att = new UserAttributes();
+
+    try
+    {
+        var result = await _downstreamApiFactory.CallApiForUserAsync("GraphApiMiddleware");
+        var json = JsonSerializer.Serialize(att);
+        //var json = await result.Content.ReadAsStringAsync();
+        var profile = JsonSerializer.Deserialize<JsonElement>(json);
+
+        if (profile.ValueKind == JsonValueKind.Undefined)
+        {
+            att.ErrorMessage = "Profile data could not be retrieved.";
+            return Ok(att);
+        }
+
+        att.ObjectId = profile.GetProperty("id").GetString() ?? "";
+        att.DisplayName = profile.GetProperty("displayName").GetString() ?? "";
+        att.Surname = profile.GetProperty("surname").GetString() ?? "";
+        att.GivenName = profile.GetProperty("givenName").GetString() ?? "";
+        att.Country = profile.GetProperty("country").GetString() ?? "";
+        att.City = profile.GetProperty("city").GetString() ?? "";
+
+        if (profile.TryGetProperty("accountEnabled", out var accountEnabled))
+            att.AccountEnabled = accountEnabled.GetBoolean();
+
+        if (profile.TryGetProperty($"{ExtensionAttributes}_SpecialDiet", out var specialDiet))
+            att.SpecialDiet = specialDiet.GetString() ?? "";
+
+        if (profile.TryGetProperty("createdDateTime", out var createdDateTime))
+            att.CreatedDateTime = createdDateTime.GetDateTime().ToString();
+
+        if (profile.TryGetProperty("lastPasswordChangeDateTime", out var pwdChangeDateTime))
+            att.LastPasswordChangeDateTime = pwdChangeDateTime.GetDateTime().ToString();
+        else
+            att.LastPasswordChangeDateTime = "Data is not available. It might be because you sign-in with a federated account, or email and one time passcode.";
+
+        return Ok(att);
+    }
+    catch (Exception ex)
+    {
+        string error = ex.InnerException?.Message ?? ex.Message;
+        att.ErrorMessage = $"Can't read the profile due to the following error: {error}";
+        AppInsights.TrackException(_telemetry, ex, "ReadProfile");
+        return Ok(att);
+    }
+}
+
+[HttpPost]
+public async Task<IActionResult> OnPostAsync([FromForm] UserAttributes att)
+{
+    _telemetry.TrackPageView("Profile:Update");
+
+    try
+    {
+        var formData = new Dictionary<string, string>
+        {
+            { "ObjectId", att.ObjectId ?? string.Empty },
+            { "City", att.City ?? string.Empty },
+            { "Country", att.Country ?? string.Empty },
+            { "DisplayName", att.DisplayName ?? string.Empty },
+            { "GivenName", att.GivenName ?? string.Empty },
+            { "SpecialDiet", att.SpecialDiet ?? string.Empty },
+            { "Surname", att.Surname ?? string.Empty }
+        };
+        var json = JsonSerializer.Serialize(att);
+        //var content = new FormUrlEncodedContent(formData);
+        //{
+        //    Content = content
+        //};
+    
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var request = new HttpRequestMessage(HttpMethod.Post, "me") // Leave empty if RelativePath is configured
+        {
+            Content = content
+        };
+
+        var client = await _downstreamApiFactory.CreateDownstreamApi("GraphApiMiddleware");
+        var response = await client.CallApiAsync(request);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return Ok(responseContent);
+    }
+    catch (Exception ex)
+    {
+        string error = ex.InnerException?.Message ?? ex.Message;
+        att.ErrorMessage = $"The account cannot be updated due to the following error: {error}";
+        AppInsights.TrackException(_telemetry, ex, "OnPostProfileAsync");
+        return Ok(att);
+    }
+}
+}

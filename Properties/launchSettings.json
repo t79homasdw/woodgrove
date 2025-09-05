@@ -1,0 +1,38 @@
+{
+  "profiles": {
+    "woodgrovedemo": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://3cloud-demo.azurewebsites.net:443;https://3cloud-demo.azurewebsites.net:80"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "launchBrowser": false,
+      "launchUrl": "https://3cloud-demo.azurewebsites.net:443",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "https://3cloud-demo.azurewebsites.net:443;https://3cloud-demo.azurewebsites.net:80"
+      },
+      "distributionName": ""
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "https://3cloud-demo.azurewebsites.net:80",
+      "sslPort": 443
+    }
+  }
+}

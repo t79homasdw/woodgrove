@@ -1,0 +1,211 @@
+﻿@page
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model IndexModel
+@{
+    ViewData["Title"] = @Configuration["Web:DemoName"] + " Demo";
+}
+
+@section Jumbotron {
+    <!-- Welcome message-->
+
+    <div class="inner-header">
+        <div class="jumbotron" style="margin-top: 20px;">
+            <div class="container">
+                <div class="row align-items-center">
+                    <h1 class="h2"
+                        style="margin-bottom: 5px; margin-top: -10px; text-shadow: 1px 1px 10px @Configuration["Web:BG_Color4"];">
+                        Welcome to
+                        the @Configuration["Web:DemoName"] Demo
+                    </h1>
+                </div>
+                <div class="row align-items-center" style="padding-top: 20px;">
+
+
+                    <div class="col lead" style="text-align: left;">
+                        <span style="letter-spacing: 0.1px;">
+                            <a href="https://aka.ms/ciam/docs" class="link-without-underline">Microsoft Entra External
+                                ID</a> offers solutions that let you quickly add
+                            intuitive, user-friendly sign-in and sign-up experiences for your external apps.
+                            <b>The @Configuration["Web:DemoName"] Demo</b> illustrates several authentication experiences for common business
+                            scenarios.</span>
+                        <div style="text-align: left; padding-top: 15px;">
+                            <i class="bi bi-youtube fs-3" style="vertical-align: -.23em"></i> <a style="color: @Configuration["Web:White"];"
+                                class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                                href="https://learn.microsoft.com/en-us/entra/external-id/customers/reference-training-videos#visit-our-video-library">Visit
+                                our video library</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Welcome message end-->
+}
+
+<!-- #region hidden user info-->
+<div class="d-none">
+    <span id="allergy">@Model.Allergy</span>
+</div>
+
+<!-- Numbers end-->
+@if (!string.IsNullOrEmpty(Model.Alert))
+{
+    <!-- System alert -->
+    <div class="alert alert-danger alert-dismissible fade show py-3 fs-6" style="margin-top: 25px;" role="alert">
+        <h4 class="alert-heading  fs-5"><i class="bi bi-exclamation-diamond-fill" style="padding-right: 10px;"></i>System
+            message</h4>
+        <p>@Model.Alert</p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="" id="specials">
+
+    <div style="margin-bottom: 5px;">&nbsp;</div>
+
+    <div class="d-flex justify-content-between">
+        <div>
+
+        </div>
+        <div>
+            <span id="stepUpFulfilled" style="display: none;">@Model.StepUpFulfilled</span>
+            <div id="checkoutContainer" style="display: none;"><i class="bi bi-cart4"></i> <span id="total">0</span>$ <a
+                    style="margin-left: 20px;" href="#" class="btn btn-warning" role="button" id="checkout"
+                    onclick="return checkout();">Checkout</a></div>
+        </div>
+    </div>
+</div>
+
+<!-- #region  Filters -->
+<div class="row mb-4" style="padding-top: 35px;">
+    <div class="col">
+        <div class="font-weight-bold h4" style="letter-spacing: 1px;">
+            <strong>Get in the groove for shopping</strong>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="bi bi-filter-square"></i>
+            </span>
+            <select class="form-select" id="categoryFilter" aria-label="Filter by category">
+                <option value="">All Categories</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category">@category</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control" id="searchInput" placeholder="Search products..."
+                aria-label="Search products">
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-2 row-cols-md-4 g-3 align-items-center" id="productsContainer">
+
+    @foreach (var product in Model.Products)
+    {
+        <div class="col product-item" data-category="@product.Category" data-name="@product.Name.ToLower()">
+            <div class="card hp_card">
+                <div class="card-body">
+                    <img class="card-img-top" src="@product.ImageUrl" alt="@product.Name">
+
+                    @if (Model.IsCommercialAccount && (product.Discount != null && product.Discount != "-"))
+                    {
+                        <a style="text-decoration: none" href="/Commercial">
+                            <div class="card-discount">@product.Discount</div>
+                        </a>
+                    }
+
+                    @* Check if the Model.Allergy is not empty. If not, check whether the product contains the Model.Allergy *@
+                    @if (!string.IsNullOrEmpty(Model.Allergy) && product.AllergyInfo.Contains(Model.Allergy, StringComparer.OrdinalIgnoreCase))
+                    {
+                        <div class="card-allergy" role="button" data-toggle="popover" data-trigger="hover"
+                            title="@Model.Allergy allergy warning">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </div>
+                    }
+
+                    <div class="card-title">@product.Name</div>
+
+                    <div class="row card-buttons">
+                        <div class="col card-price">
+                            @product.Price.ToString("C")
+                        </div>
+                        <div class="col text-end">
+                            <a href="#"
+                                class='btn btn-sm card-button @(User.Identity?.IsAuthenticated == true ? "" : "disabled")'
+                                onclick='return addItem(@product.Price.ToString())'><i class="bi bi-cart-plus"></i> Add</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+
+<div class="modal" tabindex="-1" id="thanksModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-megaphone"></i> Checkout completed</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Thank you for your order! Your purchase is complete. <b>Thanks for choosing us!</b></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" id="stepUpModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-shield-check"></i> Additional step is required</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your shopping cart currently contains items that require you to sign-in with a strong factor
+                    authentication (MFA).</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a class="btn btn-primary" href="/SignIn?handler=StepUp">Continue</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Waves {
+    <!--Waves Container-->
+    <div id="waves">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
+                <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+                <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+                <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+            </g>
+        </svg>
+    </div>
+    <!--Waves end-->
+}
+
+@section Scripts {
+    <script src="~/js/index.js"></script>
+}

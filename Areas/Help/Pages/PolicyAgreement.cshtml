@@ -1,0 +1,382 @@
+﻿@page
+@model woodgrovedemo.Help.Pages.PolicyAgreementModel
+@{
+    ViewData["Title"] = "Terms and conditions";
+    Layout = "_Layout";
+}
+
+<h1 style="margin-top: 25px; margin-bottom: 25px;">Add your terms and conditions</h1>
+
+<p>
+    Terms of use, also known as terms and conditions or terms of service, are rules, specifications, and
+    requirements for the use of your app. Microsoft Entra external ID allows you to <a
+        href="https://learn.microsoft.com/entra/external-id/customers/how-to-define-custom-attributes" target="_blank"
+        class="link-dark link-offset-2">add a custom user attribute</a> (type of
+    Boolean)
+    to the sign-up page. Before completing the sign-up, users should read and accept your policies.
+</p>
+
+@await Html.PartialAsync("_HelpSelector.cshtml", 1)
+<div class="tab-content wg-tab-content">
+    <div class="tab-pane active" id="microsoftEntraAdminCenter" role="tabpanel"
+        aria-labelledby="microsoftEntraAdminCenter-tab" tabindex="0">
+
+        @await Html.PartialAsync("_StepsButtons.cshtml")
+
+        <div class="bs-stepper vertical" id="Stepper">
+            @await Html.PartialAsync("_Steps.cshtml", 8)
+
+            <div class="bs-stepper-content">
+                <div id="step-1" role="tabpanel" class="bs-stepper-pane fade" aria-labelledby="steppertrigger1">
+                    @await Html.PartialAsync("_Prerequisites.cshtml")
+                    <p>
+                        Start by adding a custom user attribute named <b>PolicyAgreement</b>.
+                        This attribute will be collected during sign-up and stored with the user's profile in your
+                        directory.
+                        To add a user attribute, sign in to the <a href="https://entra.microsoft.com/" target="_blank"
+                            class="link-dark link-offset-2">Microsoft Entra admin center</a>
+                        and browse to <b>External Identities </b> > <b> Overview</b>. Then, select <b>Custom user
+                            attributes</b>.
+                    </p>
+
+                    <a href="#" class="pop" onclick="return false;">
+                        <img class="img-fluid border" src="~/Help/PolicyAgreement/Select-custom-user-attributes.png">
+                    </a>
+                </div>
+
+                <div id="step-2" role="tabpanel" class="bs-stepper-pane fade" aria-labelledby="steppertrigger2">
+                    <p>
+                        The <b> custom user attributes</b> list contains all user attributes available in the tenant,
+                        including any custom user attributes
+                        that have been created. The <b>Attribute type</b> column indicates whether an attribute is
+                        built-in
+                        or
+                        custom. Select <b>Add</b> to create a new user attribute.
+                    </p>
+
+                    <a href="#" class="pop" onclick="return false;">
+                        <img class="img-fluid border" src="~/Help/PolicyAgreement/Add-custom-user-attributes.png">
+                    </a>
+                </div>
+
+                <div id="step-3" role="tabpanel" class="bs-stepper-pane fade" aria-labelledby="steppertrigger3">
+                    <p>
+                        In the <b>Add an attribute</b> pane, enter a <b>Name</b> for the custom attribute. For example,
+                        <b>PolicyAgreement</b>.
+                        In <b>Data Type</b>, choose <b>Boolean</b>. In the <b>Description</b>, enter a description of
+                        the
+                        custom attribute for internal use.
+                        This description isn't visible to the user. Then select <b>Create</b> to add the new user
+                        attribute.
+                    </p>
+
+                    <a href="#" class="pop" onclick="return false;">
+                        <img class="img-fluid border" src="~/Help/PolicyAgreement/New-custom-user-attributes.png">
+                    </a>
+                </div>
+
+                <div id="step-4" role="tabpanel" class="bs-stepper-pane fade" aria-labelledby="steppertrigger4">
+                    <p>
+                        The custom attribute is now available in the list of user attributes and can be added to your
+                        user
+                        flows.
+                        From the menu, select <b>User flows</b>.
+                    </p>
+
+                    <a href="#" class="pop" onclick="return false;">
+                        <img class="img-fluid border" src="~/Help/PolicyAgreement/Select-user-flows.png">
+                    </a>
+                </div>
+
+                <div id="step-5" role="tabpanel" class="bs-stepper-pane fade" aria-labelledby="steppertrigger5">
+                    <p>
+                        From the list of <b>User flows</b>, select a user flow. In this example, we select the user flow
+                        named <b>Default</b>.
+                    </p>
+
+                    <a href="#" class="pop" onclick="return false;">
+                        <img class="img-fluid border" src="~/Help/PolicyAgreement/Select-user-flow.png">
+                    </a>
+                </div>
+
+                <div id="step-6" role="tabpanel" class="bs-stepper-pane fade" aria-labelledby="steppertrigger6">
+                    <p>
+                        From the menu, select <b>User attributes</b>. The <b>User attributes</b> list includes any
+                        custom
+                        user attributes you defined as described in the
+                        previous steps. For example, the new <b>PolicyAgreement</b> attribute now appears in the list.
+                        Select it and save the changes.
+                    </p>
+
+                    <a href="#" class="pop" onclick="return false;">
+                        <img class="img-fluid border" src="~/Help/PolicyAgreement/Add-user-attribute-to-user-flow.png">
+                    </a>
+                </div>
+
+                <div id="step-7" role="tabpanel" class="bs-stepper-pane fade" aria-labelledby="steppertrigger7">
+                    <p>
+                        After you added the <b>PolicyAgreement</b> attribute to the user flow, configure the behavior
+                        and
+                        the layout of the sign-up page.
+                        For example, which attributes are required and arrange the display order. You can also edit
+                        attribute labels, create a checkboxe, and add hyperlinks to
+                        more content (such as terms of use or a privacy policy). From the menu, select <b>Page
+                            layout</b>.
+                        The <b>PolicyAgreement</b> attribute you have chosen to collect appears in the list.
+                    </p>
+
+                    <a href="#" class="pop" onclick="return false;">
+                        <img class="img-fluid border" src="~/Help/PolicyAgreement/User-flow-page-layout.png">
+                    </a>
+                </div>
+
+                <div id="step-8" role="tabpanel" class="bs-stepper-pane fade" aria-labelledby="steppertrigger8">
+                    <p>
+                        Edit the label for the <b>PolicyAgreement</b> attribute by selecting the value in the
+                        <b>Label</b>
+                        column and modifying the text with the following <b>Markdown language</b> to add hyperlinks.<br>
+                        <code>I have read and agree to the [terms of use](https://woodgrovedemo.com/tos) and the [privacy policy](https://woodgrovedemo.com/privacy)</code>.
+
+                    <p>
+                        To make the <b>PolicyAgreement</b> attribute required, select the <b>required</b> checkbox.
+                        Note, since the <b>PolicyAgreement</b> attribute type is <b>Boolean</b>, the <b>User Input
+                            Type</b>
+                        is <b>CheckboxSingleSelect</b>. Finally, <b>Save</b> the changes.
+                    </p>
+
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">Well done!</h4>
+                        <p> Your user flow will show the links you just added. To check the user experience, sign-up to
+                            your
+                            application.</p>
+                    </div>
+
+
+                    <a href="#" class="pop" onclick="return false;">
+                        <img class="img-fluid border" src="~/Help/PolicyAgreement/User-flow-page-layout-edit.png">
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="tab-pane" id="microsoftGraph" role="tabpanel" aria-labelledby="microsoftGraph-tab" tabindex="0">
+
+        <h4 class="graph-header graph-header-space">Dependencies</h4>
+        <ul>
+            <li>User flow</li>
+        </ul>
+
+        <h4 class="graph-header graph-header-space">1. Create custom attribute</h4>
+        <p>
+            To a
+            <a href="https://learn.microsoft.com/en-us/graph/api/identityuserflowattribute-post?view=graph-rest-beta&tabs=http"
+                target="_blank" class="link-dark link-offset-2">create custom attribute</a>, run the following
+            Microsoft Graph.
+        </p>
+
+        <code
+            style="color: black;"><span class="method">POST</span> https://graph.microsoft.com/beta/identity/userFlowAttributes</code>
+
+        <pre>
+{
+    "displayName": "PolicyAgreement",
+    "description": "A required attribute that indicates whether a user consented to the terms and conditions.",
+    "dataType": "boolean"
+}
+        </pre>
+
+        <h5 class="graph-header graph-header-space">1.1 Copy the custom attribute</h5>
+        From the response, copy the value of the custom attribute <b>id</b>. For example:
+        <pre>
+{
+    "@@odata.context": "https://graph.microsoft.com/beta/$metadata#identity/userFlowAttributes/$entity",
+    "<span class="highlight">id</span>": "extension_12345678900000000000000012345678_PolicyAgreement",
+    "displayName": "PolicyAgreement",
+    "description": "A required attribute that indicates whether a user consented to the terms and conditions.",
+    "userFlowAttributeType": "custom",
+    "dataType": "boolean"
+}  
+        </pre>
+
+        <h4 class="graph-header graph-header-space">2. Add attribute to a user flow</h4>
+        <p>
+            To <a
+                href="https://learn.microsoft.com/en-us/graph/api/onattributecollectionexternalusersselfservicesignup-post-attributes?view=graph-rest-beta&tabs=http"
+                target="_blank" class="link-dark link-offset-2">add an attribute to a user flow</a>, run the
+            Microsoft Graph below.
+
+            Replace the <b>{user-flow-ID}</b> with your <a
+                href="https://learn.microsoft.com/en-us/graph/api/identitycontainer-list-authenticationeventsflows?view=graph-rest-beta&tabs=http"
+                target="_blank" class="link-dark link-offset-2">user flow ID</a>.
+
+            Replace the <b>{attribute-ID}</b> with your <a
+                href="https://learn.microsoft.com/en-us/graph/api/identityuserflowattribute-list?view=graph-rest-beta&tabs=http"
+                target="_blank" class="link-dark link-offset-2">attribute ID</a>.
+        </p>
+
+        <code
+            style="color: black;"><span class="method">POST</span> https://graph.microsoft.com/beta/identity/authenticationEventsFlows/<span class="highlight">{user-flow-ID}</span>/microsoft.graph.externalUsersSelfServiceSignUpEventsFlow/onAttributeCollection/microsoft.graph.onAttributeCollectionExternalUsersSelfServiceSignUp/attributes/$ref</code>
+
+        <pre>
+{
+    "@@odata.id":"https://graph.microsoft.com/beta/identity/userFlowAttributes/<span class="highlight">{attribute-ID}</span>"
+}
+        </pre>
+
+        <a class="btn btn-success btn-sm" data-bs-toggle="collapse" href="#collapseExample1" role="button"
+            aria-expanded="false" aria-controls="collapseExample1">
+            Show example
+        </a>
+        <div class="collapse example" id="collapseExample1">
+            <code
+                style="color: black;"><span class="method">POST</span> https://graph.microsoft.com/beta/identity/authenticationEventsFlows/12345678-1234-1234-1234-123456789012/microsoft.graph.externalUsersSelfServiceSignUpEventsFlow/onAttributeCollection/microsoft.graph.onAttributeCollectionExternalUsersSelfServiceSignUp/attributes/$ref</code>
+
+            <pre class="example">
+{
+    "@@odata.id":"https://graph.microsoft.com/beta/identity/userFlowAttributes/extension_98765432200c4c148da909f1d84b7b65_PolicyAgreement"
+}
+            </pre>
+        </div>
+
+
+        <h4 class="graph-header graph-header-space">3. Update the page layout</h4>
+        <p>
+            Usually the attribute appears at the bottom on the sign-up page. You can <a
+                href="https://learn.microsoft.com/en-us/graph/api/authenticationeventsflow-update?view=graph-rest-beta&tabs=http"
+                target="_blank" class="link-dark link-offset-2">update the sign-up page layout</a>.
+            In the page layout you can indicate which attributes are
+            required and arrange the display order. You can also edit attribute labels, create radio buttons or
+            checkboxes,
+            and more.
+        </p>
+        <p>
+            To do so, you need to update the user flow. In the request body, supply only the values for properties that
+            should be updated. Existing properties that
+            aren't included in the request body maintains their previous values or be recalculated based on changes to
+            other
+            property values.
+
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> The <b>inputs</b> collection must contain all of the
+            attributes.
+            To add or remove an attribute, make sure to include all other attributes.
+        </div>
+        </p>
+        <p>
+            Replace the <b>{user-flow-ID}</b> with your <a
+                href="https://learn.microsoft.com/en-us/graph/api/identitycontainer-list-authenticationeventsflows?view=graph-rest-beta&tabs=http"
+                target="_blank" class="link-dark link-offset-2">user flow ID</a>.
+
+            Replace the <b>{attribute-ID}</b> with your <a
+                href="https://learn.microsoft.com/en-us/graph/api/identityuserflowattribute-list?view=graph-rest-beta&tabs=http"
+                target="_blank" class="link-dark link-offset-2">attribute ID</a>.
+        </p>
+        <code
+            style="color: black;"><span class="method">PATCH</span> https://graph.microsoft.com/beta/identity/authenticationEventsFlows/<span class="highlight">{user-flow-ID}</span></code>
+
+        <pre>
+{
+    "@@odata.type": "#microsoft.graph.externalUsersSelfServiceSignUpEventsFlow",
+    "onAttributeCollection": {
+        "@@odata.type": "#microsoft.graph.onAttributeCollectionExternalUsersSelfServiceSignUp",
+        "attributeCollectionPage": {
+            "customStringsFileId": null,
+            "views": [
+                {
+                    "title": null,
+                    "description": null,
+                    "inputs": [
+                        {
+                            "attribute": "email",
+                            "label": "Email Address",
+                            "inputType": "text",
+                            "defaultValue": null,
+                            "hidden": true,
+                            "editable": false,
+                            "writeToDirectory": true,
+                            "required": true,
+                            "validationRegEx": "^[a-zA-Z0-9.!#$%&amp;amp;&amp;#8217;'*+/=?^_`{|}~-]+@@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$",
+                            "options": []
+                        },
+                        {
+                            "attribute": "displayName",
+                            "label": "Display Name",
+                            "inputType": "text",
+                            "defaultValue": null,
+                            "hidden": false,
+                            "editable": true,
+                            "writeToDirectory": true,
+                            "required": true,
+                            "validationRegEx": "^.*",
+                            "options": []
+                        },
+                        {
+                            "attribute": "country",
+                            "label": "Country/Region",
+                            "inputType": "radioSingleSelect",
+                            "defaultValue": null,
+                            "hidden": false,
+                            "editable": true,
+                            "writeToDirectory": true,
+                            "required": false,
+                            "validationRegEx": "^.*",
+                            "options": [
+                                {
+                                    "label": "Australia",
+                                    "value": "au"
+                                },
+                                {
+                                    "label": "Spain",
+                                    "value": "es"
+                                },
+                                {
+                                    "label": "United States",
+                                    "value": "us"
+                                }
+                            ]
+                        },
+                        {
+                            "attribute": "city",
+                            "label": "City",
+                            "inputType": "text",
+                            "defaultValue": null,
+                            "hidden": false,
+                            "editable": true,
+                            "writeToDirectory": true,
+                            "required": true,
+                            "validationRegEx": "^.*",
+                            "options": []
+                        },
+                        {
+                            "attribute": "<span class="highlight">{attribute-ID}</span>",
+                            "label": "I have read and agree to the [terms of use](https://woodgrovedemo.com/tos) and the [privacy policy](https://woodgrovedemo.com/privacy)",
+                            "inputType": "boolean",
+                            "defaultValue": null,
+                            "hidden": false,
+                            "editable": true,
+                            "writeToDirectory": true,
+                            "required": true,
+                            "validationRegEx": "",
+                            "options": [
+                                {
+                                    "label": "I have read and agree to the [terms of use](https://woodgrovedemo.com/tos) and the [privacy policy](https://woodgrovedemo.com/privacy)",
+                                    "value": "true"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
+        </pre>
+    </div>
+
+    <div class="tab-pane" id="entraGraphPowerShell" role="tabpanel" aria-labelledby="entraGraphPowerShell-tab"
+        tabindex="0">
+        Loading...
+    </div>
+</div>

@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "appInsights1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/microsoft.insights/components/clademo",
+      "type": "appInsights.azure",
+      "connectionId": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+      "dynamicId": null
+    },
+    "identityapp1": {
+      "connectionInfo": "App registration: Woodgrove_Demo, Tenant: Alterica Healthcare (altericahealth.com - Microsoft Entra ID)",
+      "secretStore": "AzureAppSettings",
+      "type": "identityapp.secretStore",
+      "connectionId": "AzureAD:ClientSecret"
+    }
+  }
+}

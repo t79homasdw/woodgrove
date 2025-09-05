@@ -1,0 +1,192 @@
+﻿using Azure.Identity;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Graph;
+using Microsoft.Graph.Models;
+using Microsoft.Graph.Models.ODataErrors;
+using Microsoft.Identity.Abstractions;
+using Microsoft.Identity.Web;
+using System;
+using System.Diagnostics.Metrics;
+using System.Dynamic;
+using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
+using woodgrovedemo.Helpers;
+using woodgrovedemo.Models;
+
+namespace woodgrovedemo.Controllers;
+
+[Authorize]
+[ApiController]
+[Route("api/[controller]")]
+
+
+public class UserMoreInfo1
+{
+    public string SignInType { get; set; }
+    public string SignInEmail { get; set; }
+    public string Identity { get; set; }
+    public string Issuer { get; set; }
+    public string IssuerAssignedId { get; set; }
+    public string Identities { get; set; }
+}
+
+
+public class UserMoreInfoController : ControllerBase
+{
+    // Dependency injection
+    private readonly IConfiguration _configuration;
+    private TelemetryClient _telemetry;
+    public string Identities { get; set; }
+
+
+    public UserMoreInfoController(IConfiguration configuration, TelemetryClient telemetry)
+    {
+        _configuration = configuration;
+        _telemetry = telemetry;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAsync()
+    {
+        UserMoreInfo userMoreInfo = new UserMoreInfo();
+
+        // Get the user unique identifier
+        string? userObjectId = User.GetObjectId();
+
+        var graphClient = MsalAccessTokenHandler.GetGraphClient(_configuration);
+
+        try
+        {
+            User? profile = await graphClient.Users[userObjectId].GetAsync(requestConfiguration =>
+                                {
+                                    requestConfiguration.QueryParameters.Select = new[] 
+                                    { "id", 
+                                      "identities", 
+                                      "signInActivity",
+                                      "userPrincipalName",
+                                      "issuer"
+                                    };
+                                });
+
+
+            // Get the sign-in activity
+            if (profile?.SignInActivity != null)
+            {
+                userMoreInfo.LastSignInDateTime = profile.SignInActivity.LastSignInDateTime?.ToString() ?? "N/A";
+                userMoreInfo.LastSignInRequestId = profile.SignInActivity.LastSignInRequestId ?? "N/A";
+            }
+            else
+            {
+                userMoreInfo.LastSignInDateTime = "Data is not yet available.";
+                userMoreInfo.LastSignInRequestId = userMoreInfo.LastSignInDateTime;
+            }
+
+            // Get the user identitieS
+            if (profile?.Identities != null)
+            {
+                List<UserMoreInfo1> userMoreInfoList = new List<UserMoreInfo1>();
+                int counter = 0;
+                foreach (var identity in profile.Identities!)
+                {
+                    var info = new UserMoreInfo1();
+
+                    // If both Issuer and IssuerAssignedId are empty, skip printing
+                    if (string.IsNullOrEmpty(identity.Issuer) && string.IsNullOrEmpty(identity.IssuerAssignedId))
+                        continue;
+
+                    if (identity.SignInType == "userPrincipalName" || identity.SignInType == "emailAddress")
+                    {
+                        info.SignInType = identity.SignInType ?? string.Empty;
+                        userMoreInfoList[counter] = info;
+                        var upn = profile?.UserPrincipalName;
+                        string? issuer = null;
+
+                        if (!string.IsNullOrEmpty(upn) && upn.Contains('@'))
+                        {
+                            issuer = upn.Split('@')[1]; // domain part after '@'
+                            info.Issuer = issuer;
+                            userMoreInfoList[counter] = info;
+                        }
+
+                    }
+                    if (!string.IsNullOrEmpty(identity.IssuerAssignedId))
+                    {
+                        info.IssuerAssignedId = identity.IssuerAssignedId;
+                        userMoreInfoList[counter] = info;
+                    }
+                    if (!string.IsNullOrEmpty(identity.Issuer))
+                    {
+                        info.Issuer = identity.Issuer;
+                        userMoreInfoList[counter] = info;
+                    }
+                    userMoreInfoList[counter].Identities +=
+                    (profile?.UserPrincipalName != null ? $"<li><b>User Principal Name: </b> {profile?.UserPrincipalName}</li><br>" : "") +
+                    (info.Issuer != null ? $"<li><b>Home domain (issuer): </b> {info.Issuer}</li><br>" : "") +
+                    (info.IssuerAssignedId != null ? $"<li><b>IssuerAssignedID: </b> {info.IssuerAssignedId}</li><br>" : "") +
+                    (info.SignInType != null ? $"<li><b>IssuerAssignedID: </b> {info.SignInType}</li><br>" : "");
+
+                    if (userMoreInfoList[counter].Identities != null)
+                    {
+                        userMoreInfo.Identities = userMoreInfoList[counter].Identities;
+                    }
+                }
+            }
+        }            
+        catch (ODataError odataError)
+        {
+            userMoreInfo.ErrorMessage = $"Can't read the profile due to the following error: {odataError.Error!.Message} Error code: {odataError.Error.Code}";
+            AppInsights.TrackException(_telemetry, odataError, "GetRolesAndGroupsAsync");
+        }
+        catch (Exception ex)
+        {
+            string error = ex.InnerException == null ? ex.Message : ex.InnerException.Message;
+            userMoreInfo.ErrorMessage = $"Can't read the profile due to the following error: {error}";
+            AppInsights.TrackException(_telemetry, ex, "GetRolesAndGroupsAsync");
+        }
+
+        bool StepUpFulfilled = User.Claims.Any(c => c.Type == "acrs" && c.Value == "c1");
+        try
+        {
+            var result = await graphClient.Users[userObjectId].Authentication.Methods.GetAsync();
+
+            if (result != null && result.Value != null)
+            {
+                foreach (var method in result.Value)
+                {
+                    if (method.OdataType == "#microsoft.graph.phoneAuthenticationMethod")
+                    {
+                        userMoreInfo.PhoneNumber = ((PhoneAuthenticationMethod)method).PhoneNumber ?? string.Empty;
+                    }
+                    else if (method.OdataType == "#microsoft.graph.emailAuthenticationMethod")
+                    {
+                        userMoreInfo.EmailMfa = ((EmailAuthenticationMethod)method).EmailAddress ?? string.Empty;
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(userMoreInfo.PhoneNumber))
+                userMoreInfo.PhoneNumber = "";
+
+            if (string.IsNullOrEmpty(userMoreInfo.EmailMfa))
+                userMoreInfo.EmailMfa = "";
+        }
+        catch (ODataError odataError)
+        {
+            userMoreInfo.ErrorMessage = $"Can't read the authentication methods due to the following error: {odataError.Error!.Message} Error code: {odataError.Error.Code}";
+            AppInsights.TrackException(_telemetry, odataError, "GetAuthenticationMethodsAsync");
+        }
+        catch (Exception ex)
+        {
+            string error = ex.InnerException == null ? ex.Message : ex.InnerException.Message;
+            userMoreInfo.ErrorMessage = $"Can't read the authentication methods due to the following error: {error}";
+            AppInsights.TrackException(_telemetry, ex, "GetAuthenticationMethodsAsync");
+        }
+
+        return Ok(userMoreInfo);
+    }
+}

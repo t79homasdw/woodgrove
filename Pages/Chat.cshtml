@@ -1,0 +1,11 @@
+﻿@page
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model woodgrovedemo.Pages.ChatModel
+@{
+    ViewData["Title"] = "Help";
+}
+<h1 style="color: @Configuration["Web:Chat_Color"]; padding-bottom: 15px; padding-top: 15px;">Chat page</h1>
+<div class="container">
+
+</div>
