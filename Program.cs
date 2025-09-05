@@ -137,7 +137,7 @@ namespace MyApp
             {
                 options.ListenAnyIP(443, listenOptions =>
                 {
-                    listenOptions.UseHttps("CLADemo/clademo.pfx", "clademo");
+                    listenOptions.UseHttps("certs/clademo.pfx", "password");
                 });
                 //Listen on port 80
                 options.ListenAnyIP(80);

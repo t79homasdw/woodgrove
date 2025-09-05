@@ -1,0 +1,172 @@
+{
+  "WoodgroveGroceriesApi": {
+    "BaseUrl": "api://<tenant_Name>.onmicrosoft.com/payment-api",
+    "Scopes": [
+      "Payment.Read", 
+      "User.MFA"
+    ],
+    "Endpoint": "https://<demo_Name>-groceries-api.azurewebsites.net/"
+  },
+  "WoodgroveGroceriesAuthApi": {
+    "BaseUrl": "api://<tenant_Name>.onmicrosoft.com/profile-api",
+    "Scopes": [
+      "Account.Read"
+    ],
+    "Endpoint": "https://<demo_Name>-auth-api.azurewebsites.net/"
+  },
+  "GraphApi": {
+    "BaseUrl": "https://graph.microsoft.com/v1.0",
+    "Scopes": "User.Read"
+  },
+  "DataProtection": {
+    "BlobStorageConnectionString": "new BlobServiceClient(new Uri(blobUrl), new DefaultAzureCredential())"
+  },
+  "GraphApiMiddleware": {
+    "BaseUrl": "api://<tenant_Name>.onmicrosoft.com/profile-api",
+    "Scopes": [
+      "Account.ReadWrite"
+    ],
+    "ClientId": "11111111-1111-1111-1111-111111111111",
+    "Endpoint": "https://3cloud-middleware.azurewebsites.net/profile",
+    "Endpoint2": "https://3cloud-middleware.azurewebsites.net/username"
+  },
+  "AzureAd": {
+    "Authority": "https://<tenant_Name>.ciamlogin.com",
+    "Issuer": "<tenant_Name>.onmicrosoft.com",
+    "EmailIssuer": "mail",
+    "SignInType": "userPrincipalName",
+    "ClientId": "11111111-1111-1111-1111-111111111111",
+    "CallbackPath": "/signin-oidc",
+    "ClientCertificates": [
+      {
+        "SourceType": "StoreWithThumbprint",
+        "CertificateStorePath": "CurrentUser/My",
+        "CertificateThumbprint": "11111111111111111111111111111111"
+      }
+    ]
+  },
+  "ArkoseFraudProtection": {
+    "Authority": "https://<tenant_Name>.ciamlogin.com",
+    "ClientId": "11111111-1111-1111-1111-111111111111",
+    "CallbackPath": "/signin-ArkoseFraudProtection",
+    "SignedOutCallbackPath": "/signout-ArkoseFraudProtection",
+    "ClientCertificates": [
+      {
+        "SourceType": "StoreWithThumbprint",
+        "CertificateStorePath": "CurrentUser/My",
+        "CertificateThumbprint": "11111111111111111111111111111111"
+      }
+    ]
+  },
+  "EmailOtp": {
+    "Authority": "https://<tenant_Name>.ciamlogin.com",
+    "ClientId": "11111111-1111-1111-1111-111111111111",
+    "CallbackPath": "/signin-EmailOtp",
+    "SignedOutCallbackPath": "/signout-EmailOtp",
+    "ClientCertificates": [
+      {
+        "SourceType": "StoreWithThumbprint",
+        "CertificateStorePath": "CurrentUser/My",
+        "CertificateThumbprint": "11111111111111111111111111111111"
+      }
+    ]
+  },
+  "MicrosoftGraph": {
+    "TenantId": "<tenant-id>",
+    "ClientId": "11111111-1111-1111-1111-111111111111",
+    "CertificateThumbprint": "11111111111111111111111111111111",
+    "ExtensionAttributes": "extension_00000000000000000000000000000000"
+  },
+  "AppRoles": {
+    "OrdersManager": "11111111-1111-1111-1111-111111111111",
+    "ProductsContributor": "11111111-1111-1111-1111-111111111111",
+    "CommercialAccountsSecurityGroup": "11111111-1111-1111-1111-111111111111",
+    "PrincipalId": "11111111-1111-1111-1111-111111111111",
+    "ExclusiveDemosSecurityGroup": "11111111-1111-1111-1111-111111111111"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ApplicationInsights": {
+    "ConnectionString": "<appinsights_connection_string>"
+  },
+  "Demos": {
+    "Alert": "",
+    "CustomSecurityAttributesURL": "https://<tenant_Name>.ciamlogin.com/<tenant_ID>/oauth2/v2.0/authorize?client_id=11111111-1111-1111-1111-111111111111&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fjwt.ms&scope=openid%20profile%20email&response_type=id_token&prompt=login",
+    "AssignmentRequiredURL": "https://<tenant_Name>.ciamlogin.com/<tenant_ID>/oauth2/v2.0/authorize?client_id=11111111-1111-1111-1111-111111111111&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fjwt.ms&scope=openid%20profile%20email&response_type=id_token&prompt=login",
+    "CustomDomain": "azurewebsites.net",
+    "WoodgroveBankURL": "https://<demo_Name>bank.azurewebsites.net/"
+  },
+  "Program_CS_Values": {
+    "storageAccountName": "<storagename>",
+    "containerName": "dataprotection-keys",
+    "blobName": "dataprotection-keys.xml",
+    "applicationName": "<demo_Name>-Demo-SharedAuth",
+    "storageConnectionString": "<storageConnectionString>",
+    "OpenId": "https://<tenant_Name>.ciamlogin.com/<tenant_ID>/v2.0/.well-known/openid-configuration?p=<user_flow>",
+    "JwksUri": "https://<tenant_Name>.ciamlogin.com/<tenant_ID>/discovery/v2.0/keys?p=<user_flow>",
+    "Issuer": "https://<tenant_Name>.ciamlogin.com/<tenant_ID>/v2.0/?p=<user_flow>",
+    "AuthorizationEndpoint": "https://<tenant_Name>.ciamlogin.com/<tenant_ID>/oauth2/v2.0/authorize?p=<user_flow>",
+    "TokenEndpoint": "https://<tenant_Name>.ciamlogin.com/<tenant_ID>/oauth2/v2.0/token?p=<user_flow>",
+    "UserInfoEndpoint": "https://graph.microsoft.com/oidc/userinfo?p=<user_flow>",
+    "EndSessionEndpoint": "https://<tenant_Name>.ciamlogin.com/<tenant_ID>/oauth2/v2.0/logout?p=<user_flow>",
+    "WoodgroveGroceriesAuthApi": "https://3cloudauthapi-bybhaqg4h5h4hzcs.centralus-01.azurewebsites.net/",
+    "GraphApi": "https://graph.microsoft.com/v1.0"
+  },
+  "JwtBearer": {
+    "Authority": "https://<tenant_Name>.ciamlogin.com/<tenant_ID>",
+    "Policy": "<user_flow>",
+    "ValidIssuers": [
+      "https://<tenant_Name>.ciamlogin.com/<tenant_ID>/v2.0/?p=<user_flow>",
+      "https://<tenant_Name>.ciamlogin.com/<tenant_ID>/v2.0/",
+      "https://sts.windows.net/<tenant_ID>/"
+    ],
+    "ValidAudiences": [
+      "api://<tenant_Name>.onmicrosoft.com/payment-api",
+      "api://<tenant_Name>.onmicrosoft.com/profile-api",
+      "https://graph.microsoft.com",
+      "11111111-1111-1111-1111-111111111111",
+      "11111111-1111-1111-1111-111111111111",
+      "11111111-1111-1111-1111-111111111111"
+    ]
+  },
+  "Web": {
+    "ClientUrl": "https://<demo_Name>-demo.azurewebsites.net",
+    "ApiUrl": "https://<demo_Name>-demo.azurewebsites.net",
+    "AuthApiUrl": "https://<demo_Name>-demo.azurewebsites.net",
+    "CompanyName": "<demo_Name> Solutions",
+    "CompanyShortName": "<demo_Name>",
+    "DemoName": "<demo_Name> CIAM",
+    "SupportEmail": "user@domain.com",
+    "White": "#FFFFFF",
+    "Black": "#000000",
+    "Background": "rgb(191, 255, 255)",
+    "BG_Color1": "rgb(0, 171, 235)",
+    "BG_Color2": "rgb(41, 41, 41)",
+    "BG_Color3": "rgb(200, 200, 200)",
+    "BG_Color4": "rgb(39, 56, 66)",
+    "BG_Color5": "#1b1b1b",
+    "BG_Color6": "grey",
+    "color-light": "#00ABEB",
+    "color-very-light": "rgb(191, 255, 255)",
+    "color-dark": "#015f82",
+    "color-very-dark": "#273842"
+  },
+  "AllowedHosts": "*",
+  "DownstreamApi": {
+    "BaseUrl": "api://11111111-1111-1111-1111-111111111111/access_as_user",
+    "Scopes": [
+      "user.readwrite"
+    ],
+    "ClientCertificates": [
+      {
+        "SourceType": "StoreWithThumbprint",
+        "CertificateStorePath": "CurrentUser/My",
+        "CertificateThumbprint": "11111111111111111111111111111111"
+      }
+    ]
+  }
+}
